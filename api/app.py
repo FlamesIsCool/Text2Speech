@@ -1,6 +1,7 @@
 from flask import Flask, request, send_file, jsonify, render_template
 from gtts import gTTS
 import io
+from serverless_wsgi import handle_request
 
 app = Flask(__name__)
 
@@ -38,5 +39,6 @@ def save_audio():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# This handler function is used by Vercel's Python runtime to serve your Flask app.
+def handler(event, context):
+    return handle_request(app, event, context)
