@@ -1,9 +1,13 @@
+import os
+import io
 from flask import Flask, request, send_file, jsonify, render_template
 from gtts import gTTS
-import io
 from serverless_wsgi import handle_request
 
-app = Flask(__name__)
+# Set the template folder path relative to the project root.
+# os.getcwd() should be the project root on Vercel.
+template_dir = os.path.join(os.getcwd(), 'templates')
+app = Flask(__name__, template_folder=template_dir)
 
 @app.route('/')
 def index():
@@ -39,6 +43,6 @@ def save_audio():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# This handler function is used by Vercel's Python runtime to serve your Flask app.
+# Vercel uses this handler to invoke your Flask app.
 def handler(event, context):
     return handle_request(app, event, context)
